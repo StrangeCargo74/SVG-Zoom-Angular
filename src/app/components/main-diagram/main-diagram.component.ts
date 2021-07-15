@@ -1,15 +1,47 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import gsap from 'gsap';
 
 @Component({
   selector: 'app-main-diagram',
   templateUrl: './main-diagram.component.html',
-  styleUrls: ['./main-diagram.component.sass']
+  styleUrls: ['./main-diagram.component.sass'],
 })
-export class MainDiagramComponent implements OnInit {
+export class MainDiagramComponent implements AfterViewInit {
+  @ViewChild('outerSvg')
+  _svg: ElementRef | undefined;
 
-  constructor() { }
+  private currentViewbox?: string;
+  private originalViewbox = '0 0 600 600';
 
-  ngOnInit(): void {
+  private get svg(): HTMLElement {
+    return this._svg?.nativeElement;
   }
 
+  constructor() {}
+
+  ngAfterViewInit(): void {}
+
+  public zoomToElement(rect: SVGRect) {
+    let targetViewBox;
+
+    if (this.currentViewbox) {
+      targetViewBox = this.originalViewbox;
+      this.currentViewbox = undefined;
+    } else {
+      targetViewBox = `${rect.x} ${rect.y} ${rect.width} ${rect.height}`;
+      this.currentViewbox = targetViewBox;
+    }
+
+    gsap.to(
+      this.svg, //Our SVG
+      {
+        attr: {
+          //This is the AttrPlugin which updates any attribute on every new frame
+          viewBox: targetViewBox, //We specify the end values of the animation
+        },
+        duration: 2,
+        ease: 'power2.out',
+      }
+    );
+  }
 }
