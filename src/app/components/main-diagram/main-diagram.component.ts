@@ -40,7 +40,7 @@ export class MainDiagramComponent implements AfterViewInit {
           viewBox: targetViewBox, //We specify the end values of the animation
         },
         duration: 2,
-        ease: 'power2.out',
+        ease: 'expo.out',
       }
     );
   }
